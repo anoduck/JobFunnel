@@ -126,23 +126,23 @@ def get_webdriver():
             Returns None if we don't find a supported webdriver.
     """
     try:
-        driver = webdriver.Firefox(
+        driver_raw = webdriver.Firefox(
             executable_path=GeckoDriverManager().install()
         )
     except Exception:
         try:
-            driver = webdriver.Chrome(ChromeDriverManager().install())
+            driver_raw = webdriver.Chrome(ChromeDriverManager().install())
         except Exception:
             try:
-                driver = webdriver.Ie(IEDriverManager().install())
+                driver_raw = webdriver.Ie(IEDriverManager().install())
             except Exception:
                 try:
-                    driver = webdriver.Opera(
+                    driver_raw = webdriver.Opera(
                         executable_path=OperaDriverManager().install()
                     )
                 except Exception:
                     try:
-                        driver = webdriver.Edge(
+                        driver_raw = webdriver.Edge(
                             EdgeChromiumDriverManager().install()
                         )
                     except Exception:
@@ -151,4 +151,28 @@ def get_webdriver():
                             "the following installed to scrape: [Firefox, "
                             "Chrome, Opera, Microsoft Edge, Internet Explorer]"
                         )
+    driver = driver_setup(driver_raw)
+    return driver
+
+
+def driver_setup(driver_raw):
+    """Piping driver through function should allow for setting of
+    driver options, and thus allow for enabling loading of the buster
+    extension.
+    """
+    profile = webdriver.FirefoxProfile()
+    profile.add_extension("buster_captcha_solver.xpi")
+    opts = webdriver.webdriver.options.Options()
+    opts.add_argument(
+        '--user-agent=Mozilla/5.0 CK={} (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko'  # noqa: E501
+    )
+    opts.add_argument("--headless")
+    opts.add_argument("--no-sandbox")
+    opts.add_argument("--lang=en-US")
+    # opts.add_argument("--host-rules='MAP gunbroker.com 127.0.0.1:5000'")
+    # opts.add_argument("--dns-prefetch-disable")
+    opts.set_capability("javascript.enabled", True)
+    # opts.set_preference("security.fileuri.strict_origin_policy", False)
+    # driver = webdriver.Firefox(executable_path="/usr/local/bin/geckodriver")
+    driver = driver_raw
     return driver
