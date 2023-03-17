@@ -155,16 +155,25 @@ class BaseIndeedScraper(BaseScraper):
     def get(self, parameter: JobField, soup: BeautifulSoup) -> Any:
         """Get a single job attribute from a soup object by JobField
         """
+        # Enter the Duck! Quack, Quack!
+        ## Since all of these selectors are contained within a table,
+        ## They might need to be reworked using soup.table
+        # table_soup = soup.find('table', attrs={'class': 'jobCard_mainContent'})
         if parameter == JobField.TITLE:
-            return soup.find(
-                'a', attrs={'data-tn-element': 'jobTitle'}
-            ).text.strip()
+            Title_Heading = soup.find('h2', attrs={'class': 'jobTitle'})
+            Job_Link = Title_Heading.find('a', attrs={'class': 'jcs-JobTitle'})
+            return Job_Link.find('span').text.strip()
         elif parameter == JobField.COMPANY:
-            return soup.find('span', attrs={'class': 'company'}).text.strip()
+            Name_Span = soup.find('span', attrs={'class': 'companyName'})
+            return Name_Span.find('a', attrs={'class': 'turnstileLink'}).text.strip()
         elif parameter == JobField.LOCATION:
-            return soup.find('span', attrs={'class': 'location'}).text.strip()
+            Location_Div = soup.find('div', attrs={'class': 'companylocation'}).text.split()
+            loc_ls = Location_Div[2:]
+            loc = loc_ls[0] + loc_ls[1] + ' ' + loc_ls[2]
+            return loc.strip().replace('')
         elif parameter == JobField.TAGS:
             # tags may not be on page and that's ok.
+            # Anoduck not doing tags since they are not required for now.
             table_soup = soup.find(
                 'table', attrs={'class': 'jobCardShelfContainer'}
             )
