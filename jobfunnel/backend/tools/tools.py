@@ -166,7 +166,7 @@ def driver_setup(driver_raw):
     opts.add_argument(
         '--user-agent=Mozilla/5.0 CK={} (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko'  # noqa: E501
     )
-    opts.add_argument("--headless")
+    # opts.add_argument("--headless")
     opts.add_argument("--no-sandbox")
     opts.add_argument("--lang=en-US")
     # opts.add_argument("--host-rules='MAP gunbroker.com 127.0.0.1:5000'")
