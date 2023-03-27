@@ -159,60 +159,86 @@ class BaseIndeedScraper(BaseScraper):
         ## Since all of these selectors are contained within a table,
         ## They might need to be reworked using soup.table
         # table_soup = soup.find('table', attrs={'class': 'jobCard_mainContent'})
-        if parameter == JobField.TITLE:
-            Title_Heading = soup.find('h2', attrs={'class': 'jobTitle'})
-            Job_Link = Title_Heading.find('a', attrs={'class': 'jcs-JobTitle'})
-            return Job_Link.find('span').text.strip()
-        elif parameter == JobField.COMPANY:
-            Name_Span = soup.find('span', attrs={'class': 'companyName'})
-            return Name_Span.find('a', attrs={'class': 'turnstileLink'}).text.strip()
-        elif parameter == JobField.LOCATION:
-            Location_Div = soup.find('div', attrs={'class': 'companylocation'}).text.split()
-            loc_ls = Location_Div[2:]
-            loc = loc_ls[0] + loc_ls[1] + ' ' + loc_ls[2]
-            return loc.strip().replace('')
-        elif parameter == JobField.TAGS:
-            # tags may not be on page and that's ok.
-            # Anoduck not doing tags since they are not required for now.
-            table_soup = soup.find(
-                'table', attrs={'class': 'jobCardShelfContainer'}
+        job_list = soup.find( 'ul', attrs={'class': 'jobsearch-ResultsList'})
+        if job_list:
+            self.logger.debug(
+                soup.prettify(job_list)
             )
-            if table_soup:
-                return [
-                    td.text.strip() for td in table_soup.find_all(
-                        'td', attrs={'class': 'jobCardShelfItem'}
-                    )
-                ]
-            else:
-                return []
-        elif parameter == JobField.REMOTENESS:
-            remote_field = soup.find('span', attrs={'class': 'remote'})
-            if remote_field:
-                remoteness_str = remote_field.text.strip().lower()
-                if remoteness_str in REMOTENESS_STR_MAP:
-                    return REMOTENESS_STR_MAP[remoteness_str]
-            return Remoteness.UNKNOWN
-        elif parameter == JobField.WAGE:
-            # We may not be able to obtain a wage
-            potential = soup.find('span', attrs={'class': 'salaryText'})
-            if potential:
-                return potential.text.strip()
-            else:
-                return ''
-        elif parameter == JobField.POST_DATE:
-            return calc_post_date_from_relative_str(
-                soup.find('span', attrs={'class': 'date'}).text.strip()
-            )
-        elif parameter == JobField.KEY_ID:
-            return ID_REGEX.findall(
-                str(
-                    soup.find(
-                        'a', attrs={'class': 'sl resultLink save-job-link'}
-                    )
+            job_item = job_list.find( 'td', attrs={'class': 'resultContent'})
+            if job_item:
+                self.logger.debug(
+                    soup.prettify(job_item)
                 )
-            )[0]
+                if parameter == JobField.TITLE:
+                    Title_Heading = job_item.find('h2', attrs={'class': 'jobTitle'})
+                    Job_Link = Title_Heading.find('a', attrs={'class': 'jcs-JobTitle'})
+                    Job_Title = Job_Link.find('span').text.strip()
+                    self.logger.debug(
+                        "Got Job Title result: %s", Job_Title
+                        )
+                    return Job_Title
+                elif parameter == JobField.COMPANY:
+                    Name_Span = soup.find('span', attrs={'class': 'companyName'})
+                    Company_Name = Name_Span.find('a', attrs={'class': 'turnstileLink'}).text.strip()
+                    self.logger.debug(
+                        "Got Company Name result: %s", Company_Name
+                    )
+                    return Company_Name
+                elif parameter == JobField.LOCATION:
+                    Location_Div = soup.find('div', attrs={'class': 'companylocation'}).text.split()
+                    loc_ls = Location_Div[2:]
+                    loc = loc_ls[0] + loc_ls[1] + ' ' + loc_ls[2]
+                    Job_Location = loc.strip().replace('')
+                    self.logger.debug(
+                        "Got Job Location: %s", Job_Location
+                    )
+                    return Job_Location
+                elif parameter == JobField.TAGS:
+                    # tags may not be on page and that's ok.
+                    # Anoduck not doing tags since they are not required for now.
+                    table_soup = soup.find(
+                        'table', attrs={'class': 'jobCardShelfContainer'}
+                    )
+                    if table_soup:
+                        return [
+                            td.text.strip() for td in table_soup.find_all(
+                                'td', attrs={'class': 'jobCardShelfItem'}
+                            )
+                        ]
+                    else:
+                        return []
+                elif parameter == JobField.REMOTENESS:
+                    remote_field = soup.find('span', attrs={'class': 'remote'})
+                    if remote_field:
+                        remoteness_str = remote_field.text.strip().lower()
+                        if remoteness_str in REMOTENESS_STR_MAP:
+                            return REMOTENESS_STR_MAP[remoteness_str]
+                    return Remoteness.UNKNOWN
+                elif parameter == JobField.WAGE:
+                    # We may not be able to obtain a wage
+                    potential = soup.find('span', attrs={'class': 'salaryText'})
+                    if potential:
+                        return potential.text.strip()
+                    else:
+                        return ''
+                elif parameter == JobField.POST_DATE:
+                    return calc_post_date_from_relative_str(
+                        soup.find('span', attrs={'class': 'date'}).text.strip()
+                    )
+                elif parameter == JobField.KEY_ID:
+                    return ID_REGEX.findall(
+                        str(
+                            soup.find(
+                                'a', attrs={'class': 'sl resultLink save-job-link'}
+                            )
+                        )
+                    )[0]
+                else:
+                    raise NotImplementedError(f"Cannot get {parameter.name}")
+            else:
+                raise NotImplementedError(f"Cannot get Job Item")
         else:
-            raise NotImplementedError(f"Cannot get {parameter.name}")
+            raise NotImplementedError(f"Cannot get Job List")
 
     def set(self, parameter: JobField, job: Job, soup: BeautifulSoup) -> None:
         """Set a single job attribute from a soup object by JobField

@@ -1,4 +1,6 @@
 my_settings.yaml
+docs/call_graphs/*
+*.org
 
 # Outputs
 *.csv
