@@ -30,7 +30,7 @@ def gen_html(to_parse):
     for file in to_parse:
         FILE = file
         callgraph = pyan.create_callgraph(FILE, format=FORMAT, colored=True,
-                                          draw_uses=False, nested_groups=True)
+                                          draw_uses=True, nested_groups=True)
         write_file(FILE, FORMAT, callgraph)
         print('Completed:' + FORMAT + '\n')
 # end def
@@ -44,7 +44,7 @@ def gen_dot(to_parse):
     for file in to_parse:
         FILE = file
         callgraph = pyan.create_callgraph(FILE, format=FORMAT, colored=True,
-                                          draw_uses=False, nested_groups=True)
+                                          draw_uses=True, nested_groups=True)
         write_file(FILE, FORMAT, callgraph)
         print('Completed:' + FORMAT + '\n')
 # end def
@@ -58,7 +58,7 @@ def gen_svg(to_parse):
     for file in to_parse:
         FILE = file
         callgraph = pyan.create_callgraph(FILE, format=FORMAT, colored=True,
-                                          draw_uses=False, nested_groups=True)
+                                          draw_uses=True, nested_groups=True)
         write_file(FILE, FORMAT, callgraph)
         print('Completed:' + FORMAT + '\n')
 # end def
