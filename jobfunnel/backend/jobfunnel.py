@@ -139,14 +139,12 @@ class JobFunnel(Logger):
             for match in duplicate_jobs:
 
                 # Was it a key-id match?
-                if match.type in [DuplicateType.KEY_ID or
-                                  DuplicateType.EXISTING_TFIDF]:
+                if match.type in [DuplicateType.KEY_ID or DuplicateType.EXISTING_TFIDF]:
 
                     # NOTE: original and duplicate have same key id for these.
                     # When it's EXISTING_TFIDF, we can't set match.duplicate
                     # because it is only partially stored in the block list JSON
-                    if match.original.key_id and (match.original.key_id
-                                                  != match.duplicate.key_id):
+                    if match.original.key_id and (match.original.key_id != match.duplicate.key_id):
                         raise ValueError(
                             "Found duplicate by key-id, but keys dont match! "
                             f"{match.original.key_id}, {match.duplicate.key_id}"
@@ -169,9 +167,7 @@ class JobFunnel(Logger):
 
                     # Got a content match, pop from scrape dict and maybe update
                     upd = self.master_jobs_dict[
-                        match.original.key_id].update_if_newer(
-                            scraped_jobs_dict.pop(match.duplicate.key_id)
-                        )
+                        match.original.key_id].update_if_newer(scraped_jobs_dict.pop(match.duplicate.key_id))
                     self.logger.debug(
                         "Identified %s as a duplicate by description and %s "
                         "original job %s with its data.",
@@ -208,8 +204,8 @@ class JobFunnel(Logger):
                 self.logger.warning("No new jobs were added to CSV.")
 
     def _check_for_inter_scraper_validity(self, existing_jobs: Dict[str, Job],
-                                           incoming_jobs: Dict[str, Job],
-                                           ) -> None:
+                                          incoming_jobs: Dict[str, Job],
+                                          ) -> None:
         """Verify that we aren't overwriting jobs by key-id between scrapers
         NOTE: this is a slow check, would be cool to improve the O(n) on this
         """
@@ -423,7 +419,7 @@ class JobFunnel(Logger):
                 wage = ''
                 if 'wage' in row:
                     wage = row['wage'].strip()
-                    
+
                 job = Job(
                     title=row['title'],
                     company=row['company'],
