@@ -223,7 +223,7 @@ class BaseIndeedScraper(BaseScraper):
                 else:
                     raise NotImplementedError(f"Error location parameter selector in upper half.")
             # else:
-            table_soup = job_list.find( 'table', attrs={'class': 'jobCardShelfContainer'} )
+            table_soup = job_list.find('table', attrs={'class': 'jobCardShelfContainer'})
             if table_soup:
                 if parameter == JobField.TAGS:
                     # tags may not be on page and that's ok.
@@ -345,7 +345,7 @@ class BaseIndeedScraper(BaseScraper):
         # Get the html data, initialize bs4 with lxml
         request_html = self.session.get(search_url)
         self.logger.debug(
-            "Got Base search results page: %s", search_url
+            "(1) Got Base search results page: %s", search_url
         )
         query_resp = BeautifulSoup(request_html.text, self.config.bs4_parser)
         num_res = query_resp.find(id='searchCountPages')
@@ -445,7 +445,7 @@ class IndeedScraperFRFre(BaseIndeedScraper, BaseFRFreScraper):
         # Get the html data, initialize bs4 with lxml
         request_html = self.session.get(search_url)
         self.logger.debug(
-            "Got Base search results page: %s", search_url
+            "(2) Got Base search results page: %s", search_url
         )
         query_resp = BeautifulSoup(request_html.text, self.config.bs4_parser)
         num_res = query_resp.find(id='searchCountPages')
@@ -513,7 +513,7 @@ class IndeedScraperDEGer(BaseIndeedScraper, BaseDEGerScraper):
         # Get the html data, initialize bs4 with lxml
         request_html = self.session.get(search_url)
         self.logger.debug(
-            "Got Base search results page: %s", search_url
+            "(3) Got Base search results page: %s", search_url
         )
         query_resp = BeautifulSoup(request_html.text, self.config.bs4_parser)
         num_res = query_resp.find(id='searchCountPages')
