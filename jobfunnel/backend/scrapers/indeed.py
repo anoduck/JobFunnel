@@ -159,13 +159,13 @@ class BaseIndeedScraper(BaseScraper):
         ## Since all of these selectors are contained within a table,
         ## They might need to be reworked using soup.table
         # table_soup = soup.find('table', attrs={'class': 'jobCard_mainContent'})
-        job_list = soup.find( 'ul', attrs={'class': 'jobsearch-ResultsList'})
+        job_list = soup.find('ul', attrs={'class': 'jobsearch-ResultsList'})
         if job_list:
             self.logger.debug(
                 soup.prettify(job_list)
             )
             ## Upper portion of Jobcard, upper table, different table.
-            job_item = job_list.find( 'td', attrs={'class': 'resultContent'})
+            job_item = job_list.find('td', attrs={'class': 'resultContent'})
             if job_item:
                 self.logger.debug(
                     soup.prettify(job_item)
@@ -175,9 +175,7 @@ class BaseIndeedScraper(BaseScraper):
                     Job_Link = Title_Heading.find('a', attrs={'class': 'jcs-JobTitle'})
                     if parameter == JobField.TITLE:
                         Job_Title = Job_Link.find('span').text.strip()
-                        self.logger.debug(
-                            "Got Job Title result: %s", Job_Title
-                            )
+                        self.logger.debug("Got Job Title result: %s", Job_Title)
                         return Job_Title
                     elif parameter == JobField.KEY_ID:
                         return ID_REGEX.findall(
@@ -338,7 +336,7 @@ class BaseIndeedScraper(BaseScraper):
         i.e. your search yields 230 results at 50 res/page -> 5 pages of jobs
 
         Args:
-			max_pages: the maximum number of pages to be scraped.
+            max_pages: the maximum number of pages to be scraped.
         Returns:
             The number of pages to be scraped.
         """
@@ -431,14 +429,13 @@ class IndeedScraperFRFre(BaseIndeedScraper, BaseFRFreScraper):
         else:
             raise ValueError(f'No html method {method} exists')
 
-
     def _get_num_search_result_pages(self, search_url: str, max_pages=0) -> int:
         """Calculates the number of pages of job listings to be scraped.
 
         i.e. your search yields 230 results at 50 res/page -> 5 pages of jobs
 
         Args:
-			max_pages: the maximum number of pages to be scraped.
+            max_pages: the maximum number of pages to be scraped.
         Returns:
             The number of pages to be scraped.
         """
