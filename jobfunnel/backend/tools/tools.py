@@ -1,32 +1,31 @@
 """Assorted tools for all aspects of funnelin' that don't fit elsewhere
 """
+
+from datetime import date, datetime, timedelta
 import logging
 import re
 import sys
-from datetime import date, datetime, timedelta
 from typing import Optional
 
 from dateutil.relativedelta import relativedelta
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
-from webdriver_manager.microsoft import (EdgeChromiumDriverManager,
-                                         IEDriverManager)
+from webdriver_manager.microsoft import EdgeChromiumDriverManager, IEDriverManager
 from webdriver_manager.opera import OperaDriverManager
 
-from jobfunnel.backend import Job
-
 # Initialize list and store regex objects of date quantifiers
-HOUR_REGEX = re.compile(r'(\d+)(?:[ +]{1,3})?(?:hour|hr|heure)')
-DAY_REGEX = re.compile(r'(\d+)(?:[ +]{1,3})?(?:day|d|jour)')
-MONTH_REGEX = re.compile(r'(\d+)(?:[ +]{1,3})?month|mois')
-YEAR_REGEX = re.compile(r'(\d+)(?:[ +]{1,3})?year|annee')
-RECENT_REGEX_A = re.compile(r'[tT]oday|[jJ]ust [pP]osted')
-RECENT_REGEX_B = re.compile(r'[yY]esterday')
+HOUR_REGEX = re.compile(r"(\d+)(?:[ +]{1,3})?(?:hour|hr|heure)")
+DAY_REGEX = re.compile(r"(\d+)(?:[ +]{1,3})?(?:day|d|jour)")
+MONTH_REGEX = re.compile(r"(\d+)(?:[ +]{1,3})?month|mois")
+YEAR_REGEX = re.compile(r"(\d+)(?:[ +]{1,3})?year|annee")
+RECENT_REGEX_A = re.compile(r"[tT]oday|[jJ]ust [pP]osted")
+RECENT_REGEX_B = re.compile(r"[yY]esterday")
 
 
-def get_logger(logger_name: str, level: int, file_path: str,
-               message_format: str) -> logging.Logger:
+def get_logger(
+    logger_name: str, level: int, file_path: str, message_format: str
+) -> logging.Logger:
     """Initialize and return a logger
     NOTE: you can use this as a method to add logging to any function, but if
         you want to use this within a class, just inherit Logger class.
@@ -48,9 +47,13 @@ def get_logger(logger_name: str, level: int, file_path: str,
 class Logger:
     """Class that adds a self.logger attribute for stdio and fileio"""
 
-    def __init__(self, level: int, file_path: Optional[str] = None,
-                 logger_name: Optional[str] = None,
-                 message_format: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        level: int,
+        file_path: Optional[str] = None,
+        logger_name: Optional[str] = None,
+        message_format: Optional[str] = None,
+    ) -> None:
         """Add a logger to any class
 
         Args:
@@ -110,9 +113,7 @@ def calc_post_date_from_relative_str(date_str: str) -> date:
                         post_date -= timedelta(days=int(1))
                     elif not post_date:
                         # We have failed to correctly evaluate date.
-                        raise ValueError(
-                            f"Unable to calculate date from:\n{date_str}"
-                        )
+                        raise ValueError(f"Unable to calculate date from:\n{date_str}")
 
     return post_date.replace(hour=0, minute=0, second=0, microsecond=0)
 
